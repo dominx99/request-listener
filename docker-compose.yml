@@ -1,0 +1,33 @@
+version: "3"
+services:
+  php_request_listener:
+    build:
+      context: ./
+      dockerfile: ./docker/php/Dockerfile
+    image: php:latest
+    working_dir: /application
+    volumes:
+      - .:/application
+    networks:
+      proxy:
+        ipv4_address: 10.200.2.1
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - .:/application
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php_request_listener
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.request_listener.rule=Host(`request-listener.local`)"
+      - "traefik.http.routers.request_listener.entrypoints=web"
+      - "traefik.docker.network=proxy"
+    networks:
+      proxy:
+        ipv4_address: 10.200.2.2
+
+networks:
+  proxy:
+    external: true
