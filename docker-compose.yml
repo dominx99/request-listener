@@ -21,7 +21,7 @@ services:
       - php_request_listener
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.request_listener.rule=Host(`request-listener.local`)"
+      - "traefik.http.routers.request_listener.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.request_listener.entrypoints=web"
       - "traefik.docker.network=proxy"
     networks:
