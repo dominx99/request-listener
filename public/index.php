@@ -4,7 +4,7 @@ $headers = [];
 
 header('Content-Type: application/json');
 
-echo json_encode([
+$response = json_encode([
     'get' => $_GET,
     'post' => $_POST,
     'files' => $_FILES,
@@ -12,6 +12,11 @@ echo json_encode([
     'request' => $_REQUEST,
     'headers' => getHeaders($_SERVER),
 ], JSON_PRETTY_PRINT);
+
+
+saveResponse($response);
+
+echo $response;
 
 function getHeaders(array $server): array {
 
@@ -27,3 +32,12 @@ function getHeaders(array $server): array {
     return $headers;
 }
 
+function saveResponse(string $response): void {
+    $filename = date('Y-m-d') . '.log';
+    $path = '/application/var/log/'. $filename;
+
+    $logFile = fopen($path, "a") or die("Unable to open file!");
+
+    fwrite($logFile, $response);
+    fclose($logFile);
+}
